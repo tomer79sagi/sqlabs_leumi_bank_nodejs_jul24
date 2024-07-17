@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "mr-t-modular-server",
+  "version": "1.0.0",
+  "main": "lib/appServer.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "author": "tomer79sagi",
+  "license": "ISC",
+  "description": ""
+}
