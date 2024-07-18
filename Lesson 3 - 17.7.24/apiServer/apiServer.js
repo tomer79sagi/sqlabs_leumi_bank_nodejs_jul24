@@ -162,25 +162,69 @@ const server = http.createServer((request, response) => {
     const pathname = parsedUrl.pathname; // --> /api/v1/customers
     const method = request.method; // --> GET
 
-    // 2. Handle specific URI and METHOD request
-    // /api/v1/customers - GET (ALL)
-    if (pathname === '/api/v1/customers' && method === 'GET') {
-        response.writeHead(200, {'Content-Type': 'application/json'});
-        // 3. Response .JSON response
-        response.end(JSON.stringify(customers));
+    const arrUrlParts = pathname.split('/'); // Break URL to '/' parts
+    const lastPart = arrUrlParts[arrUrlParts.length - 1]; // Extract last part
+    const lastLastPart = arrUrlParts[arrUrlParts.length - 2];
 
-    // /api/v1/customers/{id} - GET (ONE)
-    // Example: /api/v1/customers/1 - GET (ONE)
-    // Example: /api/v1/customers/2 - GET (ONE)
-    } else if () {
-        // A. Extract id from URL
-        // B. Find the customer by id
-        // C. Send the customer object as JSON to the response
+    if (!pathname.startsWith('/api/v1/')) {
+        response.writeHead(404, {'Content-Type': 'application/json'});
+        response.end(JSON.stringify({message: 'URL is invalid!'}));
+        return;
+    }
 
-    // Not found
-    } else {
-        response.writeHead(404, {'Content-Type': 'text/plain'});
-        response.end('API endpoint not found!');
+    let route = '';
+    if (lastPart === 'customers' || lastLastPart === 'customers') {
+        route = lastLastPart === 'customers' ? '--customers--x--' : '--customers--';
+    }
+
+    switch (`${route}${method}--`) {
+        case '--customers--GET--':
+            response.writeHead(200, {'Content-Type': 'application/json'});
+            response.end(JSON.stringify(customers));
+            break;
+        case '--customers--POST--':
+            // A. Expecting a full new resource
+            // - ID is not sent, MUST NOT BE SENT
+            // - Create and return the new ID
+            // B. Where is the full new resource (name, address, balance...)
+            // - Body
+            //  - Start read the data
+
+            let body = '';
+            request.on('data', chunk => body += chunk.toString());
+            request.on('end', () => {
+                //  - Create a unique ID for the new record
+                const newID = customers.length + 1;
+
+                //  - When finished, create the new resource
+                const newCustomer = JSON.parse(body);
+                newCustomer.id = newID;
+                customers.push(newCustomer);
+
+                //  - Send a response to the client
+                response.writeHead(201, {'Content-Type': 'application/json'});
+                response.end(JSON.stringify(newCustomer));
+            });
+            break;
+        case '--customers--x--GET--':
+            // lastPart is a string
+            const customer = customers.find(c => c.id === parseInt(lastPart));
+
+            if (customer) {
+                response.writeHead(200, {'Content-Type': 'application/json'});
+                response.end(JSON.stringify(customer));
+            } else {
+                response.writeHead(404, {'Content-Type': 'application/json'});
+                response.end(JSON.stringify({message: `Customer '${lastPart}' not found!`}));
+            }
+            break;
+        case '--customers--x--PUT--':
+            break;
+        case '--customers--x--DELETE--':
+            break;
+        default:
+            response.writeHead(404, {'Content-Type': 'application/json'});
+            response.end(JSON.stringify({message: 'API endpoint not found!'})); 
     }
 });
 
