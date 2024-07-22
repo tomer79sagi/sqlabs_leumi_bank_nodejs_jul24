@@ -17,6 +17,25 @@ app.use((req, res, next) => {
     next();
 });
 
+// Custom middleware - LOG RESPONSES - SEND & JSON
+app.use((req, res, next) => {
+    const oldSend = res.send;
+    const oldJSON = res.json;
+
+    res.send = function(body) {
+        console.log(`Body: ${body}`);
+        oldSend.call(this, body);
+    }
+
+    res.json = function(body) {
+        console.log(`JSON Body: ${JSON.stringify(body)}`);
+        oldJSON.call(this, body);
+    }
+
+    next();
+});
+
+
 // Delegate routing for '/api/customers' starting endpoint
 app.use('/api/customers', customerRoutes);
 
@@ -26,7 +45,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api', (req, res) => {
-    res.send({message: 'Hello World!'});
+    res.json({message: 'Hello World!'});
 });
 
 // Example: /api/search?q=hello
@@ -51,6 +70,7 @@ app.get('/api/search', (req, res, next) => {
 
 
 // POST-HANDLER MIDDLEWARE
+
 // Custom middleware - ERRORS
 app.use((err, req, res, next) => {
     console.log(`Error: ${err.status} - ${err.message}`);

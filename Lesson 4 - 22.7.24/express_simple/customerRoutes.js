@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 });
 
 // Example: /api/customers
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
     // When using .json() middleware, I can treat .body as an object
     console.log(req.body);
     console.log(req.body.name);
