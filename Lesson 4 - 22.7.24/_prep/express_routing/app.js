@@ -1,0 +1,23 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+app.post('/submit', (req, res) => {
+    res.send('Data received');
+});
+
+app.put('/update', (req, res) => {
+    res.send('Data updated');
+});
+
+app.delete('/delete', (req, res) => {
+    res.send('Data deleted');
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});
