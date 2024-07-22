@@ -2,6 +2,7 @@ const express = require('express');
 
 // Import all route handlers
 const customerRoutes = require('./customerRoutes');
+let logCounter = 1;
 
 // 1. Set up the server
 const app = express();
@@ -9,6 +10,12 @@ const port = 3000;
 
 // PRE-HANDLER MIDDLEWARE
 app.use(express.json());
+
+// Custom middleware - LOGGING
+app.use((req, res, next) => {
+    console.log(`${logCounter++} | Method: ${req.method}`);
+    next();
+});
 
 // Delegate routing for '/api/customers' starting endpoint
 app.use('/api/customers', customerRoutes);
@@ -23,7 +30,7 @@ app.get('/api', (req, res) => {
 });
 
 // Example: /api/search?q=hello
-app.get('/api/search', (req, res) => {
+app.get('/api/search', (req, res, next) => {
     const { q } = req.query;
 
     // Iterate over all keys in a JS object
@@ -32,11 +39,23 @@ app.get('/api/search', (req, res) => {
     }
 
     // Perform search
+    const error = new Error('Critical server error');
+    error.status = 401;
 
-    res.send({'search': q});
+    if (error) {
+        next(error);
+    } else {
+        res.send({'search': q});
+    }
 });
 
+
 // POST-HANDLER MIDDLEWARE
+// Custom middleware - ERRORS
+app.use((err, req, res, next) => {
+    console.log(`Error: ${err.status} - ${err.message}`);
+    res.status(err.status || 500).json({error: err.message});
+});
 
 // 3. Start the server
 app.listen(port, () => {
