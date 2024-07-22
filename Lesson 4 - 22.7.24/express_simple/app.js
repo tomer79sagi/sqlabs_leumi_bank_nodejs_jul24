@@ -10,6 +10,9 @@ const port = 3000;
 // PRE-HANDLER MIDDLEWARE
 app.use(express.json());
 
+// Delegate routing for '/api/customers' starting endpoint
+app.use('/api/customers', customerRoutes);
+
 // 2. Set up the routes
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -18,9 +21,6 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
     res.send({message: 'Hello World!'});
 });
-
-// Delegate routing for '/api/customers' starting endpoint
-app.use('/api/customers', customerRoutes);
 
 // Example: /api/search?q=hello
 app.get('/api/search', (req, res) => {

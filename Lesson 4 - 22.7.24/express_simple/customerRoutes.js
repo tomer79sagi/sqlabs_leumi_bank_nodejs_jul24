@@ -3,12 +3,15 @@ const router = express.Router();
 
 // Example: /api/customers
 router.get('/', (req, res) => {
-    res.send('All customers');
+    res.send({message: 'Get Customers'});
 });
 
 // Example: /api/customers
 router.post('/', (req, res) => {
-    res.send('Create customer');
+    // When using .json() middleware, I can treat .body as an object
+    console.log(req.body);
+    console.log(req.body.name);
+    res.status(201).json({message: 'Create customer'});
 });
 
 // Example: /api/customers/:id
