@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Transfer Funds</h1>
-    <form action="/transfer" method="POST">
+    <form action="/accounts/transfer" method="POST">
         <label for="fromAccount">From Account:</label>
         <select name="fromAccount" id="fromAccount">
             <% user.accounts.forEach(function(account) { %>
@@ -26,6 +26,6 @@
         <br>
         <button type="submit">Transfer</button>
     </form>
-    <a href="/">Back to Home</a>
+    <a href="/accounts">Back to Home</a>
 </body>
 </html>

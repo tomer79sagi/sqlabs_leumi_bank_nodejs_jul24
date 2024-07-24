@@ -2,11 +2,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const resLogger = require('./middlewares/response-logger');
+const authMiddleware = require('./middlewares/auth');
 
 // -- DB & CONFIG IMPORTS --
 const mongoose = require('mongoose');
-const Transaction = require('./models/transaction');
 const dotenv = require('dotenv');
+
+// -- CONTROLLER IMPORTS --
+const accountController = require('./controllers/account');
+const authController = require('./controllers/auth');
 
 const app = express();
 const port = 3000;
@@ -23,7 +27,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Use ResponseLogger Middleware
-app.use(resLogger);
+// app.use(resLogger);
 
 
 // -- DATA / DB / CONFIG --
@@ -51,56 +55,10 @@ mongoose.connect(connectionString)
 
 // const transactions = [];
 
-
-
 // -- CONTROLLER -- MVC
-app.get('/', (req, res) => {
-    res.render('index', { user: user });
-});
+app.use('/accounts', authMiddleware, accountController);
+app.use('/auth', authController);
 
-app.get('/transfer', (req, res) => {
-    res.render('transfer', { user: user });
-});
-
-app.post('/transfer', async (req, res) => {
-    const fromAccount = user.accounts.find(account => account.number === req.body.fromAccount);
-    const toAccount = user.accounts.find(account => account.number === req.body.toAccount);
-    const amount = parseFloat(req.body.amount);
-
-    if (fromAccount && toAccount && fromAccount !== toAccount && amount > 0 && fromAccount.balance >= amount) {
-        fromAccount.balance -= amount;
-        toAccount.balance += amount;
-
-        // -- NEW, using MongoDB --
-        try {
-            const transaction = new Transaction({
-                amount: amount,
-                fromAccount: fromAccount.number,
-                toAccount: toAccount.number
-            });
-
-            await transaction.save();
-            res.redirect('/');
-        } catch (err) {
-            console.log(`DB Error: ${err.message}`);
-            res.redirect('/');   
-        }
-
-        // -- OLD, using Array --
-    //     transactions.push({
-    //         date: new Date().toLocaleString(),
-    //         amount: amount,
-    //         from: fromAccount.number,
-    //         to: toAccount.number
-        // });
-    }
-});
-
-app.get('/transactions', async (req, res) => {
-    const transactions = await Transaction.find();
-
-    res.render('transactions', { transactions: transactions });
-});
 
 app.listen(port, () => {
     console.log(`Banking app listening at http://localhost:${port}`);
