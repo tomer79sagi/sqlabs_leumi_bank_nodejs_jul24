@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Banking System</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <% if (user != undefined) { %>
+                <a href="../accounts/dashboard">Dashboard</a>
+                <a href="../accounts/accounts">Accounts</a>
+                <a href="../accounts/transactions">Transactions</a>
+                <a href="../accounts/transfer">Transfer Funds</a>
+                <form action="../auth/logout" method="POST" style="display:inline;">
+                    <button type="submit">Logout</button>
+                </form>
+            <% } else { %>
+                <a href="login">Login</a>
+                <a href="register">Register</a>
+            <% } %>
+        </nav>
+    </header>
+    <main>
+        <%- include(body) %>
+    </main>
+</body>
+</html>

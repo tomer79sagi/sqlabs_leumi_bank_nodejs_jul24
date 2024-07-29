@@ -1,0 +1,24 @@
+<h1>Accounts</h1>
+<form action="/accounts/accounts" method="POST">
+    <label for="accountNumber">Account Number:</label>
+    <input type="text" name="accountNumber" placeholder="Account Number" required>
+    <label for="balance">Initial Balance:</label>
+    <input type="number" name="balance" placeholder="Initial Balance" required>
+    <button type="submit">Create Account</button>
+</form>
+<ul>
+    <% if (user.accounts != undefined) { %>
+        <% user.accounts.forEach(account => { %>
+            <li>
+                Account Number: <%= account.number %>, Balance: <%= account.balance %>
+            </li>
+        <% }) %>
+    <% } %>
+</ul>
+
+<% if (error) { %>
+    <p><%= error %></p>
+<% } %>
+
+<a href="/accounts/transfer">Transfer Funds</a>
+<a href="/accounts/transactions">View Transactions</a>
