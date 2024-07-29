@@ -4,6 +4,6 @@
     <input type="password" name="password" placeholder="Password" required>
     <button type="submit">Login</button>
 </form>
-<% if (messages && messages.error) { %>
-    <p><%= messages.error %></p>
+<% if (error) { %>
+    <p><%= error %></p>
 <% } %>

@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 // -- DASHBOARD --
 router.get('/dashboard', (req, res) => {
-    res.render('account/dashboard');
+    res.renderWithLayout('account/dashboard');
 });
 
 
@@ -18,7 +18,7 @@ router.get('/transactions', async (req, res) => {
 // -- TRANSFER --
 router.get('/transfer', async (req, res) => {
     const user = await User.findById(res.locals.user._id);
-    res.render('account/transfer', { accounts: user.accounts });
+    res.renderWithLayout('account/transfer', { accounts: user.accounts });
 });
 
 router.post('/transfer', async (req, res) => {
@@ -29,11 +29,11 @@ router.post('/transfer', async (req, res) => {
     const toAcc = user.accounts.id(toAccount);
 
     if (!fromAcc || !toAcc) {
-        return res.render('account/transfer', { error: 'Invalid account IDs' });
+        return res.renderWithLayout('account/transfer', { error: 'Invalid account IDs' });
     }
 
     if (fromAcc.balance < amount) {
-        return res.render('account/transfer', { error: 'Insufficient balance' });
+        return res.renderWithLayout('account/transfer', { error: 'Insufficient balance' });
     }
 
     const transaction = new Transaction({
@@ -52,14 +52,14 @@ router.post('/transfer', async (req, res) => {
 
         res.redirect('account/transfer');
     } catch (err) {
-        res.render('account/transfer', { error: err.message });
+        res.renderWithLayout('account/transfer', { error: err.message });
     }
 });
 
 
 // -- ACCOUNTS --
 router.get('/accounts', async (req, res) => {
-    res.render('account/accounts', { accounts: res.locals.user.accounts });
+    res.renderWithLayout('account/accounts', { accounts: res.locals.user.accounts });
 });
 
 router.post('/accounts', async (req, res) => {
@@ -73,7 +73,7 @@ router.post('/accounts', async (req, res) => {
         await user.save();
         res.redirect('account/accounts');
     } catch (err) {
-        res.render('account/accounts', { error: err.message });
+        res.renderWithLayout('account/accounts', { error: err.message });
     }
 });
 

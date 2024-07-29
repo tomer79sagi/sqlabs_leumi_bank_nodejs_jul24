@@ -8,6 +8,7 @@ const authController = require('./controllers/auth');
 const authenticateJWT = require('./middlewares/auth');
 const ensureDefaults = require('./middlewares/ensureDefaults');
 const renderWithLayout = require('./middlewares/renderWithLayout');
+const cookieParser = require('cookie-parser');
 
 // -- DB & CONFIG IMPORTS --
 const mongoose = require('mongoose');
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // Define a body parser for 
 // app.use(resLogger); // Use ResponseLogger Middleware
 app.use(ensureDefaults);
 app.use(renderWithLayout('_layout'));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // -- DATA / DB / CONFIG --
 // -- USE MONGODB --
