@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../_nodejs_course_prod"
+		},
+		{
+			"path": "../_nodejs_course_bank_prod"
 		}
 	],
 	"settings": {}

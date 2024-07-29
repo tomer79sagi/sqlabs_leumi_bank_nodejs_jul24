@@ -10,8 +10,26 @@ router.get('/dashboard', (req, res) => {
 
 // -- TRANSACTIONS --
 router.get('/transactions', async (req, res) => {
-
+    if (res.locals.user.accounts && res.locals.user.accounts.length > 0) {
+        try {
+            // 1. Search for user transactions
+            const transactions = await Transaction.find({
+                $or: [
+                    { fromAccount: { $in: res.locals.user.accounts } },
+                    { toAccount: { $in: res.locals.user.accounts }}
+                ]
+            }).exec();
     
+            // 2. Return them if true
+            res.renderWithLayout('account/transactions', { transactions });
+            // transactions
+        } catch(err) {
+            // 3. If not, return null and error message
+            res.renderWithLayout('account/transactions', { transactions: null, error: err.message });
+        }
+    } else { // 3. If not, return null and error message
+        res.renderWithLayout('account/transactions', { transactions: null, error: "No accounts found for user" });
+    }
 });
 
 

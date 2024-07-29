@@ -20,7 +20,7 @@ const authenticateJWT = async (req, res, next) => {
         delete user.password;
         res.locals.user = user;
     } catch(err) {
-        res.redirect('../auth/login', {error: err.message});
+        res.renderWithLayout('auth/login', {error: err.message});
     } finally {
         next();
     }

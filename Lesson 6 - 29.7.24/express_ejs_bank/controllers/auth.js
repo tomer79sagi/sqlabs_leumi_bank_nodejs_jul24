@@ -49,14 +49,14 @@ router.post('/login', async (req, res) => {
     const validPass = await bcrypt.compare(password, user.password);
     if (!validPass) return res.renderWithLayout('auth/login', { error: 'Invalid password' });
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {});
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {expiresIn: '15m'});
     res.
         cookie('mybank', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', signed: true }).
         redirect('../accounts/dashboard');
 });
 
 router.post('/logout', (req, res) => {
-    res.clearCookie('token').redirect('../auth/login');
+    res.clearCookie('mybank').redirect('../auth/login');
 });
 
 module.exports = router;
