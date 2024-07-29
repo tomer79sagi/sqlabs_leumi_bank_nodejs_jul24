@@ -1,13 +1,10 @@
 const router = require('express').Router();
 const User = require('../models/user');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const skipLogin = require('../middlewares/skipLogin');
 
 
 // Register
-router.get('/register', skipLogin, (req, res) => {
-    res.renderWithLayout('auth/register');
+router.get('/register', (req, res) => {
+    res.render('auth/register');
 });
 
 router.post('/register', async (req, res) => {
@@ -29,22 +26,22 @@ router.post('/register', async (req, res) => {
         res.redirect('login');
     } catch (error) {
         console.log(`Error: ${error.message}`);
-        res.renderWithLayout('auth/register', {error: error.message});
+        res.render('auth/register', {error: error.message});
     }
 });
 
 // Login
-router.get('/login', skipLogin, async (req, res) => {
-    res.renderWithLayout('auth/login');
+router.get('/login', async (req, res) => {
+    res.render('auth/login');
 });
 
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-    if (!user) return res.renderWithLayout('auth/login', { error: 'Username is not found' });
+    if (!user) return res.render('auth/login', { error: 'Username is not found' });
 
     const validPass = await bcrypt.compare(password, user.password);
-    if (!validPass) return res.renderWithLayout('auth/login', { error: 'Invalid password' });
+    if (!validPass) return res.render('auth/login', { error: 'Invalid password' });
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', signed: true }).redirect('../accounts/dashboard');

@@ -4,25 +4,13 @@ const User = require('../models/user');
 
 // -- DASHBOARD --
 router.get('/dashboard', (req, res) => {
-    res.renderWithLayout('account/dashboard');
+    res.render('account/dashboard');
 });
 
 
 // -- TRANSACTIONS --
 router.get('/transactions', async (req, res) => {
-    const accountId = res.locals.user.accounts && res.locals.user.accounts.length > 0 ? res.locals.user.accounts[0] : null;
 
-    if (accountId) {
-        const transactions = await Transaction.find({
-            $or: [
-                    { fromAccount: accountId },
-                    { toAccount: accountId }
-                ]
-            }).exec();
-        res.renderWithLayout('account/transactions', { transactions });
-    } else {
-        res.renderWithLayout('account/transactions', { transactions: null, error: "No accounts available." });
-    }
     
 });
 
@@ -30,7 +18,7 @@ router.get('/transactions', async (req, res) => {
 // -- TRANSFER --
 router.get('/transfer', async (req, res) => {
     const user = await User.findById(res.locals.user._id);
-    res.renderWithLayout('account/transfer', { accounts: user.accounts });
+    res.render('account/transfer', { accounts: user.accounts });
 });
 
 router.post('/transfer', async (req, res) => {
@@ -41,11 +29,11 @@ router.post('/transfer', async (req, res) => {
     const toAcc = user.accounts.id(toAccount);
 
     if (!fromAcc || !toAcc) {
-        return res.renderWithLayout('account/transfer', { error: 'Invalid account IDs' });
+        return res.render('account/transfer', { error: 'Invalid account IDs' });
     }
 
     if (fromAcc.balance < amount) {
-        return res.renderWithLayout('account/transfer', { error: 'Insufficient balance' });
+        return res.render('account/transfer', { error: 'Insufficient balance' });
     }
 
     const transaction = new Transaction({
@@ -64,14 +52,14 @@ router.post('/transfer', async (req, res) => {
 
         res.redirect('account/transfer');
     } catch (err) {
-        res.renderWithLayout('account/transfer', { error: err.message });
+        res.render('account/transfer', { error: err.message });
     }
 });
 
 
 // -- ACCOUNTS --
 router.get('/accounts', async (req, res) => {
-    res.renderWithLayout('account/accounts', { accounts: res.locals.user.accounts });
+    res.render('account/accounts', { accounts: res.locals.user.accounts });
 });
 
 router.post('/accounts', async (req, res) => {
@@ -85,7 +73,7 @@ router.post('/accounts', async (req, res) => {
         await user.save();
         res.redirect('account/accounts');
     } catch (err) {
-        res.renderWithLayout('account/accounts', { error: err.message });
+        res.render('account/accounts', { error: err.message });
     }
 });
 
