@@ -4,7 +4,9 @@ const User = require('../models/user');
 
 // Register
 router.get('/register', (req, res) => {
-    res.render('auth/register');
+    res.renderWithLayout('auth/register'); // Render with _layout
+    // res.render('auth/register'); // Render without _layout
+    // res.render('_layout', { body: 'auth/register' });
 });
 
 router.post('/register', async (req, res) => {

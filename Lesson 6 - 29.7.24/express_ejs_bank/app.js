@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const accountController = require('./controllers/account');
 const authController = require('./controllers/auth');
 const authenticateJWT = require('./middlewares/auth');
+const ensureDefaults = require('./middlewares/ensureDefaults');
+const renderWithLayout = require('./middlewares/renderWithLayout');
 
 // -- DB & CONFIG IMPORTS --
 const mongoose = require('mongoose');
@@ -23,7 +25,9 @@ app.use(express.static('public')); // Define a public static folder
 app.use(bodyParser.urlencoded({ extended: true })); // Define a body parser for Forms
 
 // -- RESPONSE MIDDLEWARES --
-app.use(resLogger); // Use ResponseLogger Middleware
+// app.use(resLogger); // Use ResponseLogger Middleware
+app.use(ensureDefaults);
+app.use(renderWithLayout('_layout'));
 
 // -- DATA / DB / CONFIG --
 // -- USE MONGODB --
